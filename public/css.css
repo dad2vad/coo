@@ -1,0 +1,10 @@
+body, html {
+  padding:0;
+  margin:0;
+  height:100%;
+  background: #edf2f7;
+}
+
+.text-link {
+  @apply text-blue-600 hover:text-blue-700;
+}

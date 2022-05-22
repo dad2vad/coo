@@ -1,0 +1,79 @@
+
+
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>To-Do на Alpine.js</title>
+    <script
+      src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.3.5/dist/alpine.min.js"
+      defer
+    ></script>
+    <link rel="stylesheet" href="reset.css" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <p><a href="/fetch.html">FETCH</a></p>
+    <p><a href="/two.html">TWO</a></p>
+    <p><a href="/toasts.html">TOASTS</a></p>
+    <p><a href="/one.html">ONE</a></p>
+    <div x-data="todos()" x-init="fetchTodos()" class="app">
+     
+      <ul>
+        <template x-for="todo in todos" :key="todo.id">
+          <li
+            @click="toggleTodo(todo.id)"
+            :class="{'completed': todo.completed}"
+          >
+            <span x-text="todo.title" class="title"></span>
+            <span @click="deleteTodo(todo.id)" class="delete-todo"
+              >&times;</span
+            >
+          </li>
+        </template>
+      </ul>
+      <div class="add-todo">
+        <input type="text" x-model="inputValue" placeholder="Новая задача" />
+        <button @click="addTodo()">Добавить</button>
+      </div>
+    </div>
+
+    <script>
+      function todos() {
+        return {
+          todos: [],
+          inputValue: "",
+          toggleTodo: function(id) {
+            var todo = this.todos.find(todo => todo.id === id);
+            if (!todo) return;
+            todo.completed = !todo.completed;
+          },
+          addTodo: function() {
+            if (!this.inputValue) {
+              return;
+            }
+
+            this.todos.push({
+              id: Date.now(),
+              title: this.inputValue,
+              completed: false
+            });
+            this.inputValue = "";
+          },
+          deleteTodo: function(id) {
+            this.todos = this.todos.filter(todo => todo.id !== id);
+          },
+          fetchTodos: function() {
+            fetch("https://jsonplaceholder.typicode.com/todos")
+              .then(response => response.json())
+              .then(data => {
+                this.todos = data.slice(0, 10);
+              });
+          }
+        };
+      }
+    </script>
+  </body>
+</html>
+
